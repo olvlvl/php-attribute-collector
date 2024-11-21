@@ -13,8 +13,14 @@ use ReflectionException;
  */
 class ClassAttributeCollector
 {
+    /**
+     * @param bool $ignoreArguments
+     *     Attribute arguments aren't used when generating a file that uses reflection.
+     *     Setting `$ignoreArguments` to `true` ignores arguments during the attribute collection.
+     */
     public function __construct(
         private IOInterface $io,
+        private bool $ignoreArguments,
     ) {
     }
 
@@ -49,7 +55,7 @@ class ClassAttributeCollector
 
             $classAttributes[] = new TransientTargetClass(
                 $attribute->getName(),
-                $attribute->getArguments(),
+                $this->getArguments($attribute),
             );
         }
 
@@ -67,7 +73,7 @@ class ClassAttributeCollector
 
                 $methodAttributes[] = new TransientTargetMethod(
                     $attribute->getName(),
-                    $attribute->getArguments(),
+                    $this->getArguments($attribute),
                     $method,
                 );
             }
@@ -88,7 +94,7 @@ class ClassAttributeCollector
 
                 $propertyAttributes[] = new TransientTargetProperty(
                     $attribute->getName(),
-                    $attribute->getArguments(),
+                    $this->getArguments($attribute),
                     $property,
                 );
             }
@@ -123,6 +129,20 @@ class ClassAttributeCollector
             InheritsAttributes::class => true,
         ];
 
-        return isset($ignored[$attribute->getName()]); // @phpstan-ignore offsetAccess.nonOffsetAccessible
+        return isset($ignored[$attribute->getName()]);
+    }
+
+    /**
+     * @param ReflectionAttribute<object> $attribute
+     *
+     * @return array<string, mixed>
+     */
+    private function getArguments(ReflectionAttribute $attribute): array
+    {
+        if ($this->ignoreArguments) {
+            return [];
+        }
+
+        return $attribute->getArguments();
     }
 }

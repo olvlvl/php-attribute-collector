@@ -15,7 +15,7 @@ _discover_ attribute targets in a codebase—for known targets you can use refle
 #### Features
 
 - Little configuration
-- No reflection in the generated file
+- No reflection in the generated file (as an option)
 - No impact on performance
 - No dependency (except Composer of course)
 - A single interface to get attribute targets: classes, methods, and properties
@@ -76,6 +76,10 @@ var_dump($attributes->classAttributes);
 var_dump($attributes->methodsAttributes);
 var_dump($attributes->propertyAttributes);
 ```
+
+> [!NOTE]
+> The plugin supports class, method, and property targets. [Contribute](CONTRIBUTING.md) if you're
+> interested in expending its support.
 
 
 
@@ -192,6 +196,30 @@ replaced with the path to the vendor folder.
 }
 ```
 
+### Use reflection
+
+> [!NOTE]
+> New in v2.1
+
+By default, the "attributes" file embeds arguments to instantiate attributes without using
+reflection. This can cause issues when the arguments are sophisticated types that don't support var
+export. Alternatively, attributes can be instantiated using reflection.
+
+The API remains the same whether reflections are used or not. You can safely switch between modes
+and see what works best for you.
+
+Use the `use-reflection` property for the "attributes" file to use reflection.
+
+```json
+{
+  "extra": {
+    "composer-attribute-collector": {
+      "use-reflection": true
+    }
+  }
+}
+```
+
 ### Cache discoveries between runs
 
 The plugin is able to maintain a cache to reuse discoveries between runs. To enable the cache,
@@ -202,6 +230,7 @@ it to your `.gitignore` file.
 ```shell
 COMPOSER_ATTRIBUTE_COLLECTOR_USE_CACHE=1 composer dump-autoload
 ```
+
 
 
 

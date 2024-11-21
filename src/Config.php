@@ -30,6 +30,7 @@ final class Config
     public const EXTRA = 'composer-attribute-collector';
     public const EXTRA_INCLUDE = 'include';
     public const EXTRA_EXCLUDE = 'exclude';
+    public const EXTRA_USE_REFLECTION = 'use-reflection';
     public const ENV_USE_CACHE = 'COMPOSER_ATTRIBUTE_COLLECTOR_USE_CACHE';
 
     /**
@@ -49,11 +50,12 @@ final class Config
 
         $rootDir .= DIRECTORY_SEPARATOR;
 
-        /** @var array{ include?: non-empty-string[], exclude?: non-empty-string[] } $extra */
+        /** @var array{ include?: non-empty-string[], exclude?: non-empty-string[], use-reflection?: bool } $extra */
         $extra = $composer->getPackage()->getExtra()[self::EXTRA] ?? [];
 
         $include = self::expandPaths($extra[self::EXTRA_INCLUDE] ?? [], $vendorDir, $rootDir);
         $exclude = self::expandPaths($extra[self::EXTRA_EXCLUDE] ?? [], $vendorDir, $rootDir);
+        $useReflection = $extra[self::EXTRA_USE_REFLECTION] ?? false;
 
         $useCache = filter_var(Platform::getEnv(self::ENV_USE_CACHE), FILTER_VALIDATE_BOOL);
 
@@ -63,6 +65,7 @@ final class Config
             include: $include,
             exclude: $exclude,
             useCache: $useCache,
+            useReflection: $useReflection,
         );
     }
 
@@ -95,6 +98,8 @@ final class Config
      *     Paths that should be excluded from the attribute collection.
      * @param bool $useCache
      *     Whether a cache should be used during the process.
+     * @param bool $useReflection
+     *     Whether the generated file should embed the arguments to instantiate attributes or use reflection instead.
      */
     public function __construct(
         public string $vendorDir,
@@ -102,6 +107,7 @@ final class Config
         public array $include,
         public array $exclude,
         public bool $useCache,
+        public bool $useReflection,
     ) {
         $this->excludeRegExp = count($exclude) ? self::compileExclude($this->exclude) : null;
     }

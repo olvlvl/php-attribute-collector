@@ -9,6 +9,7 @@ None
 ### New features
 
 - The `InheritsAttributes` attribute can be used on classes that inherit their attributes from traits, properties, or methods, and were previously ignored by the collection process.
+- The plugin can generate a file that uses reflection to create attributes instead of embedding their arguments.
 
 ### Backward Incompatible Changes
 

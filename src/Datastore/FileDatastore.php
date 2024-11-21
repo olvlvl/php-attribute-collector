@@ -30,6 +30,7 @@ final class FileDatastore implements Datastore
     public function __construct(
         private string $dir,
         private IOInterface $io,
+        private bool $useReflection,
     ) {
         if (!is_dir($dir)) {
             mkdir($dir);
@@ -86,11 +87,12 @@ final class FileDatastore implements Datastore
         return $ar;
     }
 
-    private function formatFilename(string $key): string
+    public function formatFilename(string $key): string
     {
         $major = Plugin::VERSION_MAJOR;
         $minor = Plugin::VERSION_MINOR;
+        $mode = $this->useReflection ? 'r' : 's';
 
-        return $this->dir . DIRECTORY_SEPARATOR . "v$major-$minor-$key";
+        return $this->dir . DIRECTORY_SEPARATOR . "v$major-$minor-$mode-$key";
     }
 }

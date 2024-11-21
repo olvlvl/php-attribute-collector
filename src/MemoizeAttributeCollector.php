@@ -59,7 +59,7 @@ class MemoizeAttributeCollector
                 $timestamp,
                 $classAttributes,
                 $methodAttributes,
-                $propertyAttributes
+                $propertyAttributes,
             ] = $this->state[$class] ?? [ 0, [], [], [] ];
 
             $mtime = filemtime($filepath);
@@ -76,20 +76,26 @@ class MemoizeAttributeCollector
                     [
                         $classAttributes,
                         $methodAttributes,
-                        $propertyAttributes
+                        $propertyAttributes,
                     ] = $classAttributeCollector->collectAttributes($class);
                 } catch (Throwable $e) {
                     $this->io->error(
-                        "Attribute collection failed for $class: {$e->getMessage()}"
+                        "Attribute collection failed for $class: {$e->getMessage()}",
                     );
                 }
 
                 $this->state[$class] = [ time(), $classAttributes, $methodAttributes, $propertyAttributes ];
             }
 
-            $collector->addClassAttributes($class, $classAttributes);
-            $collector->addMethodAttributes($class, $methodAttributes);
-            $collector->addTargetProperties($class, $propertyAttributes);
+            if (count($classAttributes)) {
+                $collector->addClassAttributes($class, $classAttributes);
+            }
+            if (count($methodAttributes)) {
+                $collector->addMethodAttributes($class, $methodAttributes);
+            }
+            if (count($propertyAttributes)) {
+                $collector->addTargetProperties($class, $propertyAttributes);
+            }
         }
 
         /**
@@ -98,7 +104,7 @@ class MemoizeAttributeCollector
         $this->state = array_filter(
             $this->state,
             static fn(string $k): bool => $filterClasses[$k] ?? false,
-            ARRAY_FILTER_USE_KEY
+            ARRAY_FILTER_USE_KEY,
         );
 
         $this->datastore->set(self::KEY, $this->state);

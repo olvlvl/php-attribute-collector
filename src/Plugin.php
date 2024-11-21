@@ -27,7 +27,7 @@ final class Plugin implements PluginInterface, EventSubscriberInterface
 {
     public const CACHE_DIR = '.composer-attribute-collector';
     public const VERSION_MAJOR = 2;
-    public const VERSION_MINOR = 0;
+    public const VERSION_MINOR = 1;
 
     /**
      * @uses onPostAutoloadDump
@@ -125,7 +125,11 @@ final class Plugin implements PluginInterface, EventSubscriberInterface
         // Collect attributes
         //
         $start = microtime(true);
-        $attributeCollector = new MemoizeAttributeCollector(new ClassAttributeCollector($io), $datastore, $io);
+        $attributeCollector = new MemoizeAttributeCollector(
+            new ClassAttributeCollector($io, $config->useReflection),
+            $datastore,
+            $io,
+        );
         $collection = $attributeCollector->collectAttributes($classMap);
         $elapsed = self::renderElapsedTime($start);
         $io->debug("Generating attributes file: collected attributes in $elapsed");
@@ -134,7 +138,7 @@ final class Plugin implements PluginInterface, EventSubscriberInterface
         // Render attributes
         //
         $start = microtime(true);
-        $code = self::render($collection);
+        $code = self::render($collection, $config->useReflection);
         file_put_contents($config->attributesFile, $code);
         $elapsed = self::renderElapsedTime($start);
         $io->debug("Generating attributes file: rendered code in $elapsed");
@@ -150,7 +154,11 @@ final class Plugin implements PluginInterface, EventSubscriberInterface
 
         assert($basePath !== '');
 
-        return new FileDatastore($basePath . DIRECTORY_SEPARATOR . self::CACHE_DIR, $io);
+        return new FileDatastore(
+            $basePath . DIRECTORY_SEPARATOR . self::CACHE_DIR,
+            $io,
+            $config->useReflection,
+        );
     }
 
     private static function renderElapsedTime(float $start): string
@@ -166,8 +174,12 @@ final class Plugin implements PluginInterface, EventSubscriberInterface
         ]);
     }
 
-    private static function render(TransientCollection $collector): string
+    private static function render(TransientCollection $collector, bool $useReflection): string
     {
-        return TransientCollectionRenderer::render($collector);
+        if ($useReflection) {
+            return Reflexive\TransientCollectionRenderer::render($collector);
+        }
+
+        return Static\TransientCollectionRenderer::render($collector);
     }
 }

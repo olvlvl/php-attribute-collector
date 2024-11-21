@@ -102,7 +102,7 @@ final class MemoizeClassMapGeneratorTest extends TestCase
     {
         $io = new NullIO();
         $generator = new MemoizeClassMapGenerator(
-            new FileDatastore(get_cache_dir(), $io),
+            new FileDatastore(get_cache_dir(), $io, useReflection: false),
             $io,
         );
 

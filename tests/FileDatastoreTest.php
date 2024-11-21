@@ -24,7 +24,7 @@ final class FileDatastoreTest extends TestCase
     protected function setUp(): void
     {
         $this->io = $this->createMock(IOInterface::class);
-        $this->sut = new FileDatastore(self::DIR, $this->io);
+        $this->sut = new FileDatastore(self::DIR, $this->io, useReflection: false);
 
         parent::setUp();
     }
@@ -38,7 +38,7 @@ final class FileDatastoreTest extends TestCase
             ->method('warning')
             ->withAnyParameters();
 
-        self::write($str);
+        $this->write($str);
 
         $actual = $this->sut->get(self::KEY);
 
@@ -54,7 +54,7 @@ final class FileDatastoreTest extends TestCase
             ->method('warning')
             ->with($this->stringStartsWith("Unable to unserialize cache item"));
 
-        self::write($str);
+        $this->write($str);
 
         $actual = $this->sut->get(self::KEY);
 
@@ -72,16 +72,16 @@ final class FileDatastoreTest extends TestCase
             ->method('warning')
             ->with($this->stringStartsWith("Unable to unserialize cache item"));
 
-        self::write($str);
+        $this->write($str);
 
         $actual = $this->sut->get(self::KEY);
 
         $this->assertEquals($expected, $actual);
     }
 
-    private static function write(string $str): void
+    private function write(string $str): void
     {
-        $filename = self::DIR . 'v' . Plugin::VERSION_MAJOR . '-' . Plugin::VERSION_MINOR . '-' . self::KEY;
+        $filename = $this->sut->formatFilename(self::KEY);
 
         file_put_contents($filename, $str);
     }

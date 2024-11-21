@@ -24,7 +24,7 @@ final class ClassAttributeCollectorTest extends TestCase
     {
         parent::setUp();
 
-        $this->sut = new ClassAttributeCollector(new NullIO());
+        $this->sut = new ClassAttributeCollector(new NullIO(), ignoreArguments: false);
     }
 
     /**

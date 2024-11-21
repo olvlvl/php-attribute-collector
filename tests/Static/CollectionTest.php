@@ -1,6 +1,6 @@
 <?php
 
-namespace tests\olvlvl\ComposerAttributeCollector;
+namespace tests\olvlvl\ComposerAttributeCollector\Static;
 
 use Acme\Attribute\ActiveRecord\Id;
 use Acme\Attribute\ActiveRecord\Index;
@@ -19,7 +19,7 @@ use Acme\PSR4\DeleteMenu;
 use Acme\PSR4\Presentation\ArticleController;
 use Closure;
 use olvlvl\ComposerAttributeCollector\Attributes;
-use olvlvl\ComposerAttributeCollector\Collection;
+use olvlvl\ComposerAttributeCollector\Static\Collection;
 use olvlvl\ComposerAttributeCollector\TargetClass;
 use olvlvl\ComposerAttributeCollector\TargetMethod;
 use olvlvl\ComposerAttributeCollector\TargetProperty;

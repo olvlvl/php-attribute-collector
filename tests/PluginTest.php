@@ -66,6 +66,7 @@ final class PluginTest extends TestCase
             ],
             exclude: $exclude,
             useCache: false,
+            useReflection: false,
         );
 
         Plugin::dump(
