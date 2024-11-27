@@ -1,12 +1,5 @@
 <?php
 
-/*
- * (c) Olivier Laviale <olivier.laviale@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace tests\olvlvl\ComposerAttributeCollector;
 
 use Acme\Attribute\ActiveRecord\Boolean;
@@ -263,6 +256,24 @@ final class PluginTest extends TestCase
             [ new Get(), 'Acme\Presentation\ImageController::list' ],
             [ new Get('/{id}'), 'Acme\Presentation\ImageController::show' ],
         ], $this->collectMethods($actual));
+    }
+
+    /**
+     * @requires PHP >= 8.1
+     */
+    public function testComplexTypes81(): void
+    {
+        $expected = [
+            new TargetClass(
+                new \Acme81\Attribute\SampleComplex(new \Acme81\Attribute\SampleComplexValue(1)),
+                \Acme81\PSR4\Presentation\ArticleController::class,
+            )
+        ];
+        $actual = Attributes::filterTargetClasses(
+            Attributes::predicateForAttributeInstanceOf(\Acme81\Attribute\SampleComplex::class)
+        );
+
+        $this->assertEquals($expected, $actual);
     }
 
     /**

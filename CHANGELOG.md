@@ -1,6 +1,30 @@
 # CHANGELOG
 
-## v1.2 to v2.0
+## v2.0.1
+
+### New Requirements
+
+None
+
+### New features
+
+None
+
+### Backward Incompatible Changes
+
+None
+
+### Deprecated Features
+
+None
+
+### Other Changes
+
+Attribute arguments are now serialized to support [nested attributes introduced in PHP 8.1](https://wiki.php.net/rfc/new_in_initializers).
+
+
+
+## v2.0.0
 
 ### New Requirements
 

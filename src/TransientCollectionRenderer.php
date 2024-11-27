@@ -47,7 +47,9 @@ final class TransientCollectionRenderer
      * //phpcs:disable Generic.Files.LineLength.TooLong
      * @param iterable<class-string, iterable<TransientTargetClass|TransientTargetMethod|TransientTargetProperty>> $targetByClass
      *
-     * @return array<class-string, array<array{ array<int|string, mixed>, class-string, 2?:non-empty-string }>>
+     * @return array<class-string, array<array{ string, class-string, 2?:non-empty-string }>>
+     *     Where _key_ is an attribute class and _value_ the attribute targets,
+     *     where `0` is the attribute serialized arguments, `1` the target class, and `2` the method or property name.
      */
     private static function targetsToArray(iterable $targetByClass): array
     {
@@ -55,7 +57,7 @@ final class TransientCollectionRenderer
 
         foreach ($targetByClass as $class => $targets) {
             foreach ($targets as $t) {
-                $a = [ $t->arguments, $class ];
+                $a = [ serialize($t->arguments), $class ];
 
                 if ($t instanceof TransientTargetMethod || $t instanceof TransientTargetProperty) {
                     $a[] = $t->name;
